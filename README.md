@@ -1,4 +1,31 @@
 # terraform-google-nat-instance
+
+This module provisions a NAT instance in Google Cloud that lets instances in a private subnet connect to resources outside your VPC network. A route is created to send internet traffic to the NAT instance.
+
+Features:
+
+- VM instance
+    - IP forwarding enabled
+    - CentOS 9
+    - Persistent iptables
+- Route
+    - `0.0.0.0/0` destination
+    - `900` priority
+    - Route applies to instances with network tag `no-ext-ip`
+    - Next hop is NAT instance
+
+## Usage
+
+```hcl
+module "nat" {
+  source = "github.com/mscribellito/terraform-google-nat-instance"
+
+  project_id = "your-project-id"
+  zone       = "your-zone"
+  subnetwork = "your-subnetwork-self-link"
+}
+```
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
