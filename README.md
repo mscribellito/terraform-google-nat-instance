@@ -6,7 +6,7 @@ Features:
 
 - VM instance
     - IP forwarding enabled
-    - CentOS 9
+    - Ubuntu 20.04 LTS
     - Persistent iptables
 - Route
     - `0.0.0.0/0` destination
@@ -21,7 +21,7 @@ module "nat" {
   source = "github.com/mscribellito/terraform-google-nat-instance"
 
   project_id = "your-project-id"
-  zone       = "your-zone"
+  region     = "your-region"
   subnetwork = "your-subnetwork-self-link"
 }
 ```
