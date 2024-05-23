@@ -1,40 +1,44 @@
-resource "google_compute_instance" "nat" {
-  project = var.project_id
+data "google_compute_image" "ubuntu" {
+  project = "ubuntu-os-cloud"
 
-  name = var.name
+  family = "ubuntu-2204-lts"
+}
 
+module "nat" {
+  source = "github.com/mscribellito/terraform-google-vm-instance"
+
+  project_id   = var.project_id
+  name         = var.name
+  region       = var.region
   machine_type = var.machine_type
-  zone         = var.zone
 
-  boot_disk {
-    initialize_params {
-      image = "projects/centos-cloud/global/images/centos-stream-9-v20240415"
-      size  = var.disk_size
-      type  = var.disk_type
-    }
-  }
-
-  network_interface {
-    access_config {
-      network_tier = var.network_tier
-    }
-    subnetwork = var.subnetwork
+  boot_disk = {
+    image = data.google_compute_image.ubuntu.self_link
+    type  = var.disk_type
+    size  = var.disk_size
   }
 
   can_ip_forward = true
 
-  metadata_startup_script = file("files/nat.sh")
+  network_interfaces = [{
+    subnetwork = var.subnetwork
+    access_config = {
+    }
+  }]
 
+  metadata = {
+    startup-script = file("files/nat.sh")
+  }
 }
 
 resource "google_compute_route" "nat" {
   project = var.project_id
 
   name                   = var.name
+  network                = module.nat.instance_details.network_interface[0].network
   dest_range             = "0.0.0.0/0"
-  network                = google_compute_instance.nat.network_interface[0].network
   priority               = var.route_priority
   tags                   = var.network_tags
-  next_hop_instance      = google_compute_instance.nat.self_link
-  next_hop_instance_zone = google_compute_instance.nat.zone
+  next_hop_instance      = module.nat.self_link
+  next_hop_instance_zone = module.nat.zone
 }

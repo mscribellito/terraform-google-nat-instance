@@ -1,13 +1,8 @@
 #!/bin/bash
 
-yum install iptables-services -y
-systemctl enable iptables
-systemctl start iptables
+sysctl -w net.ipv4.ip_forward=1
 
-echo "net.ipv4.ip_forward=1" | tee -a /etc/sysctl.d/custom-ip-forwarding.conf
-sysctl -p /etc/sysctl.d/custom-ip-forwarding.conf
-
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o ens4 -j MASQUERADE
 iptables -F FORWARD
 
-service iptables save
+iptables-save

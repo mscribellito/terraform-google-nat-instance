@@ -9,21 +9,15 @@ variable "name" {
   default     = "nat-instance"
 }
 
+variable "region" {
+  type        = string
+  description = "The region of the NAT instance."
+}
+
 variable "machine_type" {
   type        = string
   description = "The machine type of the NAT instance."
-  default     = "e2-standard-2"
-}
-
-variable "zone" {
-  type        = string
-  description = "The zone of the NAT instance."
-}
-
-variable "disk_size" {
-  type        = number
-  description = "The disk size of the NAT instance."
-  default     = 20
+  default     = "e2-micro"
 }
 
 variable "disk_type" {
@@ -32,10 +26,10 @@ variable "disk_type" {
   default     = "pd-standard"
 }
 
-variable "network_tier" {
-  type        = string
-  description = "The network tier of the NAT instance."
-  default     = "PREMIUM"
+variable "disk_size" {
+  type        = number
+  description = "The disk size of the NAT instance."
+  default     = 20
 }
 
 variable "subnetwork" {
@@ -43,14 +37,14 @@ variable "subnetwork" {
   description = "The subnetwork of the NAT instance."
 }
 
-variable "route_priority" {
-  type        = number
-  description = "The priority of the NAT route."
-  default     = 900
-}
-
 variable "network_tags" {
   type        = list(string)
   description = "The network tags the NAT route applies to."
   default     = ["no-ext-ip"]
+}
+
+variable "route_priority" {
+  type        = number
+  description = "The priority of the NAT route."
+  default     = 900
 }
